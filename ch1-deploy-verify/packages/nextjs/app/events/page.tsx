@@ -13,20 +13,26 @@ const Events: NextPage = () => {
   const [eventType, setEventType] = useState<"token" | "nft">("token");
 
   // Get token transfer events
-  const { data: tokenEvents, isLoading: tokenLoading } = useScaffoldEventHistory({
+  // Start from recent blocks to avoid RPC timeout issues
+  // Current block is ~28M, starting from 27M to catch recent deployments
+  const { data: tokenEvents, isLoading: tokenLoading, error: tokenError } = useScaffoldEventHistory({
     contractName: "MyToken",
     eventName: "Transfer",
-    fromBlock: 0n,
+    fromBlock: BigInt(27000000),
     watch: true,
   });
 
   // Get NFT transfer events
-  const { data: nftEvents, isLoading: nftLoading } = useScaffoldEventHistory({
+  const { data: nftEvents, isLoading: nftLoading, error: nftError } = useScaffoldEventHistory({
     contractName: "MyNFT",
     eventName: "Transfer",
-    fromBlock: 0n,
+    fromBlock: BigInt(27000000),
     watch: true,
   });
+
+  // Log errors for debugging
+  if (tokenError) console.error("Token events error:", tokenError);
+  if (nftError) console.error("NFT events error:", nftError);
 
   // Determine which events to show based on selected tab
   const currentEvents = eventType === "token" ? tokenEvents || [] : nftEvents || [];
