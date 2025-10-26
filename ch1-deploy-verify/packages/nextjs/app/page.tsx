@@ -2,6 +2,7 @@
 
 import type { NextPage } from "next";
 import { NFTCollection } from "~~/components/example-ui/NFTCollection";
+import { OraclePrice } from "~~/components/example-ui/OraclePrice";
 import { TokenBalance } from "~~/components/example-ui/TokenBalance";
 import { TokenTransfer } from "~~/components/example-ui/TokenTransfer";
 
@@ -16,15 +17,23 @@ const Home: NextPage = () => {
         </div>
 
         <div className="flex-grow bg-base-300 w-full mt-8 px-8 py-12">
-          <div className="flex justify-center items-center gap-6 flex-col sm:flex-row">
-            <div className="flex flex-col px-10 py-10 text-center items-center rounded-3xl">
-              <TokenBalance />
+          <div className="flex justify-center items-start gap-6 flex-col">
+            {/* Oracle Price Feed - Challenge 4 */}
+            <div className="w-full max-w-4xl mx-auto">
+              <OraclePrice />
             </div>
-            <div className="flex flex-col px-10 py-10 text-center items-center rounded-3xl">
-              <TokenTransfer />
-            </div>
-            <div className="flex flex-col px-10 py-10 text-center items-center rounded-3xl">
-              <NFTCollection />
+
+            {/* Token and NFT Components - Challenge 2 */}
+            <div className="flex justify-center items-start gap-6 flex-col sm:flex-row w-full">
+              <div className="flex flex-col px-10 py-10 text-center items-center rounded-3xl flex-1">
+                <TokenBalance />
+              </div>
+              <div className="flex flex-col px-10 py-10 text-center items-center rounded-3xl flex-1">
+                <TokenTransfer />
+              </div>
+              <div className="flex flex-col px-10 py-10 text-center items-center rounded-3xl flex-1">
+                <NFTCollection />
+              </div>
             </div>
           </div>
         </div>

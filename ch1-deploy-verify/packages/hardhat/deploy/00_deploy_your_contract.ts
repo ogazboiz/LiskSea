@@ -35,10 +35,18 @@ const deployContracts: DeployFunction = async function (hre: HardhatRuntimeEnvir
     log: true,
     autoMine: true,
   });
+
+  // Deploy PriceFeed Oracle (Challenge 4)
+  await deploy("PriceFeed", {
+    from: deployer,
+    args: [],
+    log: true,
+    autoMine: true,
+  });
 };
 
 export default deployContracts;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags MyToken
-deployContracts.tags = ["MyToken", "MyNFT"];
+deployContracts.tags = ["MyToken", "MyNFT", "PriceFeed"];

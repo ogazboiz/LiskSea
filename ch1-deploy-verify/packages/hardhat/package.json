@@ -36,7 +36,6 @@
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "ethers": "^6.10.0",
     "execa": "^8.0.1",
     "hardhat": "^2.19.4",
     "hardhat-deploy": "^0.11.45",
@@ -50,10 +49,25 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@ethersproject/basex": "^5.8.0",
+    "@ethersproject/bignumber": "^5.8.0",
+    "@ethersproject/bytes": "^5.8.0",
+    "@ethersproject/hdnode": "^5.8.0",
+    "@ethersproject/keccak256": "^5.8.0",
+    "@ethersproject/logger": "^5.8.0",
+    "@ethersproject/pbkdf2": "^5.8.0",
+    "@ethersproject/properties": "^5.8.0",
+    "@ethersproject/rlp": "^5.8.0",
+    "@ethersproject/sha2": "^5.8.0",
+    "@ethersproject/signing-key": "^5.8.0",
+    "@ethersproject/strings": "^5.8.0",
+    "@ethersproject/wordlists": "^5.8.0",
     "@openzeppelin/contracts": "^4.8.1",
     "@typechain/ethers-v6": "^0.5.1",
     "dotenv": "^16.0.3",
     "envfile": "^6.18.0",
-    "qrcode": "^1.5.1"
+    "ethers": "^6.10.0",
+    "qrcode": "^1.5.1",
+    "secp256k1": "^5.0.1"
   }
 }
