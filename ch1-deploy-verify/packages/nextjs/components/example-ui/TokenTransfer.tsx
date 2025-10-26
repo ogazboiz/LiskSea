@@ -14,6 +14,7 @@ export const TokenTransfer = () => {
   const { writeAsync: writeMyTokenAsync } = useScaffoldContractWrite({
     contractName: "MyToken",
     functionName: "transfer",
+    args: [recipient, amount ? parseEther(amount) : 0n],
   });
 
   const handleTransfer = async () => {
