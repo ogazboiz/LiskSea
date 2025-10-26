@@ -3,7 +3,7 @@
 import type { NextPage } from "next";
 import { GaslessDemo } from "~~/components/example-ui/GaslessDemo";
 import { NFTCollection } from "~~/components/example-ui/NFTCollection";
-import { OraclePrice } from "~~/components/example-ui/OraclePrice";
+import { PriceDisplay } from "~~/components/example-ui/PriceDisplay";
 import { TokenBalance } from "~~/components/example-ui/TokenBalance";
 import { TokenTransfer } from "~~/components/example-ui/TokenTransfer";
 
@@ -20,9 +20,13 @@ const Home: NextPage = () => {
         <div className="flex-grow bg-base-300 w-full mt-8 px-8 py-12">
           <div className="flex justify-center items-start gap-6 flex-col">
             {/* Challenge 4: Oracle Price Feed & Gasless Transactions */}
-            <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <OraclePrice />
-              <GaslessDemo />
+            <div className="w-full max-w-6xl mx-auto">
+              <h2 className="text-2xl font-bold text-center mb-6">Challenge 4: Oracles & Gasless Transactions</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <PriceDisplay symbol="ETH" />
+                <PriceDisplay symbol="BTC" />
+                <GaslessDemo />
+              </div>
             </div>
 
             {/* Token and NFT Components - Challenge 2 */}
