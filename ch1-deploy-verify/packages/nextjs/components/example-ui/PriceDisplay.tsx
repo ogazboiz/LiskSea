@@ -35,20 +35,29 @@ export const PriceDisplay = ({ symbol }: PriceDisplayProps) => {
       setIsLoading(true);
       setError("");
 
+      console.log(`[${symbol}] Starting price fetch...`);
+      console.log(`[${symbol}] Contract address:`, deployedContractData.address);
+
       // Create ethers provider from window.ethereum
       const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+      console.log(`[${symbol}] Created ethers provider`);
 
       // Create ethers contract instance
       const contract = new ethers.Contract(deployedContractData.address, deployedContractData.abi, provider);
+      console.log(`[${symbol}] Created contract instance`);
 
       // Wrap contract with RedStone data using correct API
+      console.log(`[${symbol}] Wrapping contract with RedStone...`);
       const wrappedContract = WrapperBuilder.wrap(contract).usingDataService({
         dataPackagesIds: [symbol],
         authorizedSigners: getSignersForDataServiceId("redstone-main-demo"),
       });
+      console.log(`[${symbol}] Contract wrapped successfully`);
 
       // Call the appropriate price function
+      console.log(`[${symbol}] Calling price function...`);
       const priceData = symbol === "ETH" ? await wrappedContract.getEthPrice() : await wrappedContract.getBtcPrice();
+      console.log(`[${symbol}] Price data received:`, priceData?.toString());
 
       if (!priceData) {
         throw new Error("No price data returned from oracle");
@@ -56,10 +65,15 @@ export const PriceDisplay = ({ symbol }: PriceDisplayProps) => {
 
       // Format price (8 decimals to 2 decimals)
       const formattedPrice = (Number(priceData) / 1e8).toFixed(2);
+      console.log(`[${symbol}] Formatted price: $${formattedPrice}`);
       setPrice(formattedPrice);
       setLastUpdate(new Date());
     } catch (error) {
-      console.error("Error fetching price:", error);
+      console.error(`[${symbol}] Error fetching price:`, error);
+      console.error(`[${symbol}] Error details:`, {
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       setError(error instanceof Error ? error.message : "Failed to fetch price");
     } finally {
       setIsLoading(false);
