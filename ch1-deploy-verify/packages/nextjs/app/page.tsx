@@ -33,14 +33,14 @@ const Home: NextPage = () => {
       <div className="flex items-center flex-col flex-grow pt-10 pb-12">
         {/* Hero Section */}
         <div className="px-5 text-center mb-12 max-w-4xl">
-          <h1 className="text-6xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h1 className="text-6xl font-bold mb-4 text-white drop-shadow-2xl">
+            <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent drop-shadow-2xl">
               Lisk SEA dApp
             </span>
           </h1>
-          <p className="text-2xl font-semibold text-base-content/80 mb-3">Week 4 Challenge Complete</p>
+          <p className="text-2xl font-semibold text-base-content/80 mb-3">Week 6 Challenge Complete</p>
           <p className="text-base-content/60">
-            Smart Contracts • Oracle Integration • Gasless Transactions • Event Tracking
+            Complete DeFi dApp with Smart Contracts, NFT Marketplace, Simple DEX, Oracle Integration, Gasless Transactions & Event Tracking
           </p>
         </div>
 
@@ -136,7 +136,7 @@ const Home: NextPage = () => {
           )}
 
           {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <Link
               href="/debug"
               className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
@@ -166,7 +166,35 @@ const Home: NextPage = () => {
             </Link>
 
             <Link
-              href="/debug"
+              href="/marketplace"
+              className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            >
+              <div className="card-body">
+                <div className="text-4xl mb-2">🛒</div>
+                <h2 className="card-title text-base-content">NFT Marketplace</h2>
+                <p className="text-base-content/70 text-sm">Buy and sell NFTs with live USD prices</p>
+                <div className="card-actions justify-end">
+                  <button className="btn btn-success btn-sm">Browse →</button>
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/dex"
+              className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            >
+              <div className="card-body">
+                <div className="text-4xl mb-2">💱</div>
+                <h2 className="card-title text-base-content">Simple DEX</h2>
+                <p className="text-base-content/70 text-sm">AMM-based token swaps with liquidity pools</p>
+                <div className="card-actions justify-end">
+                  <button className="btn btn-warning btn-sm">Trade →</button>
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/oracle"
               className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
             >
               <div className="card-body">
@@ -175,6 +203,20 @@ const Home: NextPage = () => {
                 <p className="text-base-content/70 text-sm">Real-time ETH & BTC prices via RedStone</p>
                 <div className="card-actions justify-end">
                   <button className="btn btn-accent btn-sm">View Prices →</button>
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/gasless"
+              className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            >
+              <div className="card-body">
+                <div className="text-4xl mb-2">⚡</div>
+                <h2 className="card-title text-base-content">Gasless Transactions</h2>
+                <p className="text-base-content/70 text-sm">ERC-4337 Smart Wallets with sponsored gas</p>
+                <div className="card-actions justify-end">
+                  <button className="btn btn-success btn-sm">Try Gasless →</button>
                 </div>
               </div>
             </Link>
@@ -232,6 +274,26 @@ const Home: NextPage = () => {
                     </p>
                   </div>
                 </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="badge badge-success badge-lg">✓</div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-base-content">Challenge 5: NFT Marketplace</h3>
+                    <p className="text-sm text-base-content/70">
+                      Escrowless marketplace with oracle-powered USD price display
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="badge badge-success badge-lg">✓</div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-base-content">Challenge 6: Simple DEX</h3>
+                    <p className="text-sm text-base-content/70">
+                      Automated Market Maker with swap and liquidity features
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -246,6 +308,18 @@ const Home: NextPage = () => {
                 </Link>
                 <Link href="/events" className="btn btn-ghost bg-white/20 hover:bg-white/30">
                   📜 View Events
+                </Link>
+                <Link href="/marketplace" className="btn btn-ghost bg-white/20 hover:bg-white/30">
+                  🛒 Marketplace
+                </Link>
+                <Link href="/dex" className="btn btn-ghost bg-white/20 hover:bg-white/30">
+                  💱 DEX
+                </Link>
+                <Link href="/gasless" className="btn btn-ghost bg-white/20 hover:bg-white/30">
+                  ⚡ Gasless
+                </Link>
+                <Link href="/oracle" className="btn btn-ghost bg-white/20 hover:bg-white/30">
+                  📊 Oracle
                 </Link>
                 <Link href="/blockexplorer" className="btn btn-ghost bg-white/20 hover:bg-white/30">
                   🔍 Block Explorer
