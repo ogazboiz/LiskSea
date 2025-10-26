@@ -1,101 +1,79 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@redstone-finance/evm-connector/contracts/data-services/MainDemoConsumerBase.sol";
+
 /**
  * @title PriceFeed
- * @dev A simple oracle contract that can store and retrieve price data
- *
- * For Challenge 4, we implement a basic price feed contract.
- * In production, you would use RedStone's evm-connector for real oracle data.
- *
- * Since we're on a testnet and experiencing package installation issues,
- * this contract provides a manual price feed mechanism where:
- * - An authorized updater can set prices
- * - Anyone can read the latest price
- * - Prices include timestamps for freshness checks
+ * @notice Fetches real-time price data using RedStone Pull oracle
+ * @dev Uses MainDemoConsumerBase for testnet compatibility
  */
-contract PriceFeed {
-    struct PriceData {
-        uint256 price;      // Price with 8 decimals (e.g., 2000_00000000 = $2000.00)
-        uint256 timestamp;  // When this price was updated
-        string symbol;      // Asset symbol (e.g., "ETH/USD")
-    }
+contract PriceFeed is MainDemoConsumerBase {
 
-    // Mapping from asset symbol to price data
-    mapping(string => PriceData) public prices;
+    /**
+     * @notice Override timestamp validation to allow more lenient checks
+     * @dev Allows oracle data from up to 15 minutes in the past or future
+     * This is useful for local development where blockchain time may differ from real-time
+     * @param receivedTimestampMilliseconds Timestamp from the oracle data package
+     */
+    function validateTimestamp(uint256 receivedTimestampMilliseconds) public view virtual override {
+        // Convert block.timestamp from seconds to milliseconds
+        uint256 blockTimestampMilliseconds = block.timestamp * 1000;
 
-    // Address authorized to update prices
-    address public updater;
+        // Allow data from 15 minutes in the past or future
+        uint256 maxTimestampDiffMilliseconds = 15 * 60 * 1000; // 15 minutes
 
-    // Events
-    event PriceUpdated(string symbol, uint256 price, uint256 timestamp);
-    event UpdaterChanged(address indexed oldUpdater, address indexed newUpdater);
-
-    constructor() {
-        updater = msg.sender;
-    }
-
-    modifier onlyUpdater() {
-        require(msg.sender == updater, "Only updater can call this function");
-        _;
+        // Check if timestamp is too far in the past
+        if (blockTimestampMilliseconds > receivedTimestampMilliseconds) {
+            require(
+                blockTimestampMilliseconds - receivedTimestampMilliseconds <= maxTimestampDiffMilliseconds,
+                "Timestamp too old"
+            );
+        }
+        // Check if timestamp is too far in the future
+        else {
+            require(
+                receivedTimestampMilliseconds - blockTimestampMilliseconds <= maxTimestampDiffMilliseconds,
+                "Timestamp too far in future"
+            );
+        }
     }
 
     /**
-     * @dev Update the price for an asset
-     * @param symbol The asset symbol (e.g., "ETH/USD", "BTC/USD")
-     * @param price The price with 8 decimals
+     * @notice Get the latest ETH/USD price
+     * @return price The current ETH price in USD (8 decimals)
      */
-    function updatePrice(string memory symbol, uint256 price) external onlyUpdater {
-        prices[symbol] = PriceData({
-            price: price,
-            timestamp: block.timestamp,
-            symbol: symbol
-        });
+    function getEthPrice() public view returns (uint256) {
+        bytes32[] memory dataFeedIds = new bytes32[](1);
+        dataFeedIds[0] = bytes32("ETH");
 
-        emit PriceUpdated(symbol, price, block.timestamp);
+        uint256[] memory prices = getOracleNumericValuesFromTxMsg(dataFeedIds);
+        return prices[0];
     }
 
     /**
-     * @dev Get the latest price for an asset
-     * @param symbol The asset symbol
-     * @return price The price with 8 decimals
-     * @return timestamp When the price was last updated
+     * @notice Get the latest BTC/USD price
+     * @return price The current BTC price in USD (8 decimals)
      */
-    function getPrice(string memory symbol) external view returns (uint256 price, uint256 timestamp) {
-        PriceData memory data = prices[symbol];
-        require(data.timestamp > 0, "Price not available for this symbol");
-        return (data.price, data.timestamp);
+    function getBtcPrice() public view returns (uint256) {
+        bytes32[] memory dataFeedIds = new bytes32[](1);
+        dataFeedIds[0] = bytes32("BTC");
+
+        uint256[] memory prices = getOracleNumericValuesFromTxMsg(dataFeedIds);
+        return prices[0];
     }
 
     /**
-     * @dev Get the full price data for an asset
-     * @param symbol The asset symbol
-     * @return priceData The complete price data struct
+     * @notice Get multiple prices at once
+     * @return ethPrice The current ETH price
+     * @return btcPrice The current BTC price
      */
-    function getPriceData(string memory symbol) external view returns (PriceData memory) {
-        require(prices[symbol].timestamp > 0, "Price not available for this symbol");
-        return prices[symbol];
-    }
+    function getMultiplePrices() public view returns (uint256 ethPrice, uint256 btcPrice) {
+        bytes32[] memory dataFeedIds = new bytes32[](2);
+        dataFeedIds[0] = bytes32("ETH");
+        dataFeedIds[1] = bytes32("BTC");
 
-    /**
-     * @dev Change the authorized price updater
-     * @param newUpdater The new updater address
-     */
-    function setUpdater(address newUpdater) external onlyUpdater {
-        require(newUpdater != address(0), "Invalid updater address");
-        address oldUpdater = updater;
-        updater = newUpdater;
-        emit UpdaterChanged(oldUpdater, newUpdater);
-    }
-
-    /**
-     * @dev Check if a price is fresh (updated within the last hour)
-     * @param symbol The asset symbol
-     * @return isFresh True if the price was updated within the last hour
-     */
-    function isPriceFresh(string memory symbol) external view returns (bool) {
-        PriceData memory data = prices[symbol];
-        if (data.timestamp == 0) return false;
-        return (block.timestamp - data.timestamp) < 1 hours;
+        uint256[] memory prices = getOracleNumericValuesFromTxMsg(dataFeedIds);
+        return (prices[0], prices[1]);
     }
 }

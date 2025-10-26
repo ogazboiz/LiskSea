@@ -19,8 +19,8 @@ if (content.includes('"PriceFeed"')) {
 // Look for the last occurrence of "},\n  }\n} as const"
 const regex = /(    },\n  }\n} as const)/;
 
-// Create the PriceFeed entry
-const priceFeedEntry = `    },\n    "PriceFeed": {\n      "address": "0xF62b20b220c814c04EdbAe93B1093Bba5537DE42",\n      "abi": ${JSON.stringify(priceFeedArtifact.abi, null, 8).replace(/\n/g, '\n      ')},\n      "inheritedFunctions": {}\n`;
+// Create the PriceFeed entry with NEW RedStone address
+const priceFeedEntry = `    },\n    "PriceFeed": {\n      "address": "0xEE36fd4DDAa47B3678A3618cBD419b890ef4CC78",\n      "abi": ${JSON.stringify(priceFeedArtifact.abi, null, 8).replace(/\n/g, '\n      ')},\n      "inheritedFunctions": {}\n`;
 
 // Replace
 const newContent = content.replace(regex, priceFeedEntry + '$1');
