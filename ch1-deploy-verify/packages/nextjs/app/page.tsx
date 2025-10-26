@@ -1,6 +1,7 @@
 "use client";
 
 import type { NextPage } from "next";
+import { GaslessDemo } from "~~/components/example-ui/GaslessDemo";
 import { NFTCollection } from "~~/components/example-ui/NFTCollection";
 import { OraclePrice } from "~~/components/example-ui/OraclePrice";
 import { TokenBalance } from "~~/components/example-ui/TokenBalance";
@@ -18,9 +19,10 @@ const Home: NextPage = () => {
 
         <div className="flex-grow bg-base-300 w-full mt-8 px-8 py-12">
           <div className="flex justify-center items-start gap-6 flex-col">
-            {/* Oracle Price Feed - Challenge 4 */}
-            <div className="w-full max-w-4xl mx-auto">
+            {/* Challenge 4: Oracle Price Feed & Gasless Transactions */}
+            <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
               <OraclePrice />
+              <GaslessDemo />
             </div>
 
             {/* Token and NFT Components - Challenge 2 */}
