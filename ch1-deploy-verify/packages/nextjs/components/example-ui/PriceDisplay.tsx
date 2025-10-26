@@ -35,29 +35,25 @@ export const PriceDisplay = ({ symbol }: PriceDisplayProps) => {
       setIsLoading(true);
       setError("");
 
-      console.log(`[${symbol}] Starting price fetch...`);
-      console.log(`[${symbol}] Contract address:`, deployedContractData.address);
-
       // Create ethers provider from window.ethereum
       const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-      console.log(`[${symbol}] Created ethers provider`);
 
       // Create ethers contract instance
       const contract = new ethers.Contract(deployedContractData.address, deployedContractData.abi, provider);
-      console.log(`[${symbol}] Created contract instance`);
 
-      // Wrap contract with RedStone data using correct API
-      console.log(`[${symbol}] Wrapping contract with RedStone...`);
+      // Get authorized signers for redstone-main-demo service
+      const authorizedSigners = getSignersForDataServiceId("redstone-main-demo");
+
+      // Wrap contract with RedStone data
       const wrappedContract = WrapperBuilder.wrap(contract).usingDataService({
+        dataServiceId: "redstone-main-demo",
         dataPackagesIds: [symbol],
-        authorizedSigners: getSignersForDataServiceId("redstone-main-demo"),
+        authorizedSigners: authorizedSigners,
+        uniqueSignersCount: Math.max(1, Math.floor(authorizedSigners.length / 2)),
       });
-      console.log(`[${symbol}] Contract wrapped successfully`);
 
       // Call the appropriate price function
-      console.log(`[${symbol}] Calling price function...`);
       const priceData = symbol === "ETH" ? await wrappedContract.getEthPrice() : await wrappedContract.getBtcPrice();
-      console.log(`[${symbol}] Price data received:`, priceData?.toString());
 
       if (!priceData) {
         throw new Error("No price data returned from oracle");
@@ -65,15 +61,10 @@ export const PriceDisplay = ({ symbol }: PriceDisplayProps) => {
 
       // Format price (8 decimals to 2 decimals)
       const formattedPrice = (Number(priceData) / 1e8).toFixed(2);
-      console.log(`[${symbol}] Formatted price: $${formattedPrice}`);
       setPrice(formattedPrice);
       setLastUpdate(new Date());
     } catch (error) {
-      console.error(`[${symbol}] Error fetching price:`, error);
-      console.error(`[${symbol}] Error details:`, {
-        message: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined,
-      });
+      console.error(`Error fetching ${symbol} price:`, error);
       setError(error instanceof Error ? error.message : "Failed to fetch price");
     } finally {
       setIsLoading(false);
@@ -87,10 +78,14 @@ export const PriceDisplay = ({ symbol }: PriceDisplayProps) => {
     return () => clearInterval(interval);
   }, [deployedContractData, symbol]);
 
+  const iconSymbol = symbol === "ETH" ? "Ξ" : "₿";
+
   return (
-    <div className="card w-96 bg-base-100 shadow-xl">
+    <div className="card w-full bg-base-100 shadow-xl">
       <div className="card-body">
-        <h2 className="card-title justify-center">{symbol}/USD</h2>
+        <h2 className="card-title justify-center text-2xl">
+          {iconSymbol} {symbol}/USD
+        </h2>
 
         {error ? (
           <div className="alert alert-error">
@@ -114,28 +109,43 @@ export const PriceDisplay = ({ symbol }: PriceDisplayProps) => {
             <span className="loading loading-spinner loading-lg"></span>
           </div>
         ) : (
-          <div className="stats">
-            <div className="stat">
-              <div className="stat-title">Current Price</div>
-              <div className="stat-value text-primary">${price}</div>
-              <div className="stat-desc">Updated: {lastUpdate.toLocaleTimeString()}</div>
+          <div className="text-center py-4">
+            <div className="text-sm text-gray-500 mb-2">Current Price</div>
+            <div className="text-4xl font-bold text-primary mb-2">${price}</div>
+            <div className="text-xs text-gray-400">
+              Updated: {lastUpdate.toLocaleTimeString()}
             </div>
           </div>
         )}
 
-        <div className="card-actions justify-end">
+        <div className="card-actions justify-end mt-4">
           <button className="btn btn-sm btn-outline" onClick={fetchPrice} disabled={isLoading}>
-            {isLoading ? "Refreshing..." : "Refresh"}
+            {isLoading ? (
+              <>
+                <span className="loading loading-spinner loading-xs"></span>
+                Refreshing...
+              </>
+            ) : (
+              <>🔄 Refresh</>
+            )}
           </button>
         </div>
 
         <div className="alert alert-info mt-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="stroke-current shrink-0 w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
           </svg>
-          <span className="text-xs">
-            ✨ Powered by RedStone Pull Oracle - Real-time data!
-          </span>
+          <span className="text-xs">Powered by RedStone Pull Oracle</span>
         </div>
       </div>
     </div>

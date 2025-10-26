@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { PriceDisplay } from "~~/components/example-ui/PriceDisplay";
@@ -46,7 +46,7 @@ const Oracle: NextPage = () => {
               <p><strong>RedStone Pull:</strong> Data in transaction calldata → Cheaper → Fetched on-demand</p>
 
               <div className="steps steps-vertical lg:steps-horizontal mt-4">
-                <div className="step step-primary">User clicks "Refresh"</div>
+                <div className="step step-primary">User clicks &quot;Refresh&quot;</div>
                 <div className="step step-primary">RedStone API fetches latest prices</div>
                 <div className="step step-primary">Prices appended to transaction</div>
                 <div className="step step-primary">Smart contract verifies signatures</div>

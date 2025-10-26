@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { NextPage } from "next";
 import { formatEther } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useBlockNumber } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
 
@@ -12,27 +12,53 @@ const Events: NextPage = () => {
   const { isConnected } = useAccount();
   const [eventType, setEventType] = useState<"token" | "nft">("token");
 
+  // Use deployment block numbers from hardhat deployments
+  // MyToken deployed at block 28075869, MyNFT likely around the same block
+  // To be safe and stay within RPC limits, we query from a reasonable starting point
+  const DEPLOYMENT_BLOCK = 28_000_000n; // Start from before deployment to catch all events
+
+  // Get current block number
+  const { data: currentBlock } = useBlockNumber({ watch: false });
+
+  // Calculate fromBlock: use deployment block or go back 100k blocks, whichever is more recent
+  const [fromBlock, setFromBlock] = useState<bigint | undefined>(undefined);
+
+  useEffect(() => {
+    if (currentBlock) {
+      // Go back 100,000 blocks (RPC limit) from current block
+      const blockRange = 100000n;
+      const recentBlock = currentBlock - blockRange;
+
+      // Use whichever is more recent: deployment block or recent block range
+      const calculatedFromBlock = recentBlock > DEPLOYMENT_BLOCK ? recentBlock : DEPLOYMENT_BLOCK;
+      setFromBlock(calculatedFromBlock);
+    }
+  }, [currentBlock, DEPLOYMENT_BLOCK]);
+
   // Get token transfer events
-  // Start from recent blocks to avoid RPC timeout issues
-  // Current block is ~28M, starting from 27M to catch recent deployments
-  const { data: tokenEvents, isLoading: tokenLoading, error: tokenError } = useScaffoldEventHistory({
+  // Using calculated fromBlock to stay within RPC limits
+  // Only query if we have calculated the fromBlock
+  const {
+    data: tokenEvents,
+    isLoading: tokenLoading,
+  } = useScaffoldEventHistory({
     contractName: "MyToken",
     eventName: "Transfer",
-    fromBlock: BigInt(27000000),
+    fromBlock: fromBlock ?? 0n,
     watch: true,
   });
 
   // Get NFT transfer events
-  const { data: nftEvents, isLoading: nftLoading, error: nftError } = useScaffoldEventHistory({
+  const {
+    data: nftEvents,
+    isLoading: nftLoading,
+  } = useScaffoldEventHistory({
     contractName: "MyNFT",
     eventName: "Transfer",
-    fromBlock: BigInt(27000000),
+    fromBlock: fromBlock ?? 0n,
     watch: true,
   });
 
-  // Log errors for debugging
-  if (tokenError) console.error("Token events error:", tokenError);
-  if (nftError) console.error("NFT events error:", nftError);
 
   // Determine which events to show based on selected tab
   const currentEvents = eventType === "token" ? tokenEvents || [] : nftEvents || [];

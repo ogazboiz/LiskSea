@@ -71,7 +71,7 @@ export const GaslessDemo = () => {
             <h3 className="font-bold">What are Gasless Transactions?</h3>
             <div className="text-xs">
               With ERC-4337, users can send transactions without paying gas fees.
-              A "paymaster" sponsors the transaction costs, improving user experience.
+              A &quot;paymaster&quot; sponsors the transaction costs, improving user experience.
             </div>
           </div>
         </div>
@@ -124,13 +124,13 @@ export const GaslessDemo = () => {
         <div className="divider">Implementation with thirdweb</div>
 
         <div className="mockup-code text-xs">
-          <pre data-prefix="1"><code>// Install thirdweb SDK</code></pre>
+          <pre data-prefix="1"><code>{/* Install thirdweb SDK */}</code></pre>
           <pre data-prefix="2"><code>yarn add thirdweb</code></pre>
           <pre data-prefix="3"><code></code></pre>
-          <pre data-prefix="4"><code>// Setup Smart Wallet with Paymaster</code></pre>
-          <pre data-prefix="5"><code>import {"{ThirdwebProvider, smartWallet}"} from "thirdweb/wallets";</code></pre>
+          <pre data-prefix="4"><code>{/* Setup Smart Wallet with Paymaster */}</code></pre>
+          <pre data-prefix="5"><code>import {`{ThirdwebProvider, smartWallet}`} from &quot;thirdweb/wallets&quot;;</code></pre>
           <pre data-prefix="6"><code></code></pre>
-          <pre data-prefix="7"><code>const wallet = smartWallet({"{"}paymasterUrl: "..."{"}"};</code></pre>
+          <pre data-prefix="7"><code>const wallet = smartWallet({`{paymasterUrl: &quot;...&quot;}`};</code></pre>
         </div>
 
         {/* Demo Transaction Form */}
